@@ -1,0 +1,19 @@
+---
+title: "p8105_hw3_sy3352"
+author: "Su Yan"
+date: "2025-10-06"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggridges)
+library(p8105.datasets)
+data("instacart")
+```
+
+# Problem 1
+
+# Problem 2
+
+# Problem 3
