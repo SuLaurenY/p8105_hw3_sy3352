@@ -24,12 +24,14 @@ aisle_amount
 There are `r nrow(distinct(instacart,aisle))` aisles. The most ordered aisles are `fresh vegetables`, `fresh fruits`, `packaged vegetables fruits`, `yogurt` and `packaged cheese`.
 
 ```{r}
-aisle_amount = filter(aisle_amount, n>10000)
-aisle_amount |> ggplot(aes(x = aisle, y = n)) + 
+aisle_amount = filter(aisle_amount, n>10000) 
+aisle_amount |> 
+  ggplot(aes(x = reorder(aisle,n), y = n)) + 
   geom_col() +
   coord_flip(ylim = c(10000, NA)) + 
   scale_y_continuous(breaks = c(10000, 40000, 80000, 120000)) +
   labs(title = "Number of items ordered in each aisle (# > 10000)",
+       x = "aisle",
        y = "number of items ordered")
 ```
 
