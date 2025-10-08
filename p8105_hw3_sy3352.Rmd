@@ -35,6 +35,17 @@ aisle_amount |>
        y = "number of items ordered")
 ```
 
+Most Popular Items in Selected Aisles:
+```{r}
+top_3_aisle = filter(instacart, aisle == c("baking ingredients", "dog food care", "packaged vegetables fruits")) |> 
+  select(aisle, product_name) |> 
+  group_by(aisle, product_name) |> 
+  summarize(number_items_ordered = n()) |> 
+  group_by(aisle) |> 
+  slice_max(number_items_ordered, n = 3) |> 
+  knitr::kable(digits = 1) 
+top_3_aisle
+```
 
 # Problem 2
 
