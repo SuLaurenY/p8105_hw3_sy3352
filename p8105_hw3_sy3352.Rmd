@@ -17,6 +17,23 @@ data("instacart")
 The `instacart` data set contains data of order details people placed on instacart in 2017. It contains `r nrow(instacart)` observations and `r ncol(instacart)` columns. Each row gives detailed information of one product in an order. Some of the key variables are `order_id` `product_id` `reordered` `order_dow` `order_hour_of_day` `product_name` `aisle` and `department`. For example, row 3859 displayed an **Organic Baby Carrots**
  ordered by userid **198041** on Saturday afternoon (`order_dow`: 6 and `order_hour_of_day`: 18), which belongs to aisle **packaged vegetables fruits** and department **produce**.
 
+```{r}
+aisle_amount = count(instacart, aisle, sort = TRUE)
+aisle_amount
+```
+There are `r nrow(distinct(instacart,aisle))` aisles. The most ordered aisles are `fresh vegetables`, `fresh fruits`, `packaged vegetables fruits`, `yogurt` and `packaged cheese`.
+
+```{r}
+aisle_amount = filter(aisle_amount, n>10000)
+aisle_amount |> ggplot(aes(x = aisle, y = n)) + 
+  geom_col() +
+  coord_flip(ylim = c(10000, NA)) + 
+  scale_y_continuous(breaks = c(10000, 40000, 80000, 120000)) +
+  labs(title = "Number of items ordered in each aisle (# > 10000)",
+       y = "number of items ordered")
+```
+
+
 # Problem 2
 
 # Problem 3
