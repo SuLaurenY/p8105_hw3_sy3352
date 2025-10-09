@@ -62,7 +62,33 @@ product_week_hour = filter(instacart, product_name == c("Pink Lady Apples", "Cof
 product_week_hour
 ```
 
-
 # Problem 2
+
+```{r}
+rent_df = read_csv("data/Zip_zori_uc_sfrcondomfr_sm_month_NYC.csv") |> 
+  pivot_longer(cols = 10:125,
+               names_to = "date",
+               values_to = "rent_rate") |> 
+  janitor::clean_names() |> 
+  select(-region_type, -state_name, -state, -city, -metro, -region_id, -size_rank) |> 
+  rename(zip_code = region_name)
+
+zip_df = read_csv("data/Zip Codes.csv") |> 
+  janitor::clean_names() |> 
+  select(-county_code, -county_fips, -state_fips, -file_date, -county)
+
+rent_neigh_joint_df = rent_df |> 
+  left_join(zip_df, by = c("zip_code")) |> 
+  relocate(last_col(), .after = 2) |> 
+  drop_na(rent_rate)
+```
+
+```{r}
+count_zip = rent_neigh_joint_df |> 
+  group_by(zip_code) |> 
+  summarize(month_count = n()) 
+```
+
+`r sum(count_zip$month_count == 116)` zip codes are observed 116 times. `r sum(count_zip$month_count < 10)` zip codes are observed less than 10 times. Possible reasons for some zip codes to be observed fewer than others can be that they are commercial zip codes or PO-box zip codes which does not represent residential significance and thus does not provide consistent rent information. For example, the zip code **10044** was observed 9 times. It stands for Roosevelt island which has a small area and thus less housing for rent, resulting in less rental information provided. 
 
 # Problem 3
