@@ -43,9 +43,25 @@ top_3_aisle = filter(instacart, aisle == c("baking ingredients", "dog food care"
   summarize(number_items_ordered = n()) |> 
   group_by(aisle) |> 
   slice_max(number_items_ordered, n = 3) |> 
-  knitr::kable(digits = 1) 
+  knitr::kable(digits = 0) 
 top_3_aisle
 ```
+
+The mean hour of the day at which the selected two products are ordered:
+```{r}
+product_week_hour = filter(instacart, product_name == c("Pink Lady Apples", "Coffee Ice Cream")) |> 
+  select(order_dow, product_name, order_hour_of_day) |> 
+  pivot_wider(names_from = order_dow,
+              values_from = order_hour_of_day,
+              names_prefix = "day_",
+              values_fn = mean) |> 
+  rename(Sunday = "day_0", Monday = "day_1", Tuesday = "day_2", Wednesday = "day_3",
+         Thursday = "day_4", Friday = "day_5", Saturday = "day_6") |> 
+  select(product_name, Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday) |> 
+  knitr::kable(digits = 0)
+product_week_hour
+```
+
 
 # Problem 2
 
