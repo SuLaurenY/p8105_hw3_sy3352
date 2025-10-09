@@ -91,4 +91,19 @@ count_zip = rent_neigh_joint_df |>
 
 `r sum(count_zip$month_count == 116)` zip codes are observed 116 times. `r sum(count_zip$month_count < 10)` zip codes are observed less than 10 times. Possible reasons for some zip codes to be observed fewer than others can be that they are commercial zip codes or PO-box zip codes which does not represent residential significance and thus does not provide consistent rent information. For example, the zip code **10044** was observed 9 times. It stands for Roosevelt island which has a small area and thus less housing for rent, resulting in less rental information provided. 
 
+```{r}
+year_trend = rent_neigh_joint_df |> 
+  mutate(year = year(date)) |> 
+  select(-zip_code, -date, -neighborhood) |> 
+  pivot_wider(names_from = year,
+              values_from = rent_rate,
+              names_prefix = "year_",
+              values_fn = mean,
+              names_sort = TRUE) |> 
+  rename(borough = county_name) |> 
+  knitr::kable(digits = 2)
+year_trend
+```
+
+
 # Problem 3
