@@ -133,4 +133,12 @@ zip_year_plot
 ```
 The plot shows the annual rent price by zip code in NYC from 2015 to 2024. The 5 boroughs in the plot are represented by 5 different colors as shown in the legend at the right side. Each point in the plot represents a zip code's rent in a certain year. From the plot we can see overall all 5 boroughs in NYC experience a steady growth (except for 2020-2021 due to covid-19 impact) in rent and also a more and more spread-out price range. Richmond County has no data available during 2015 to 2019, thus the points only starts from 2020. New York County has not only overall highest rent but also the widest range of rents, indicating the most diversity in housing rental options.
 
+```{r}
+zip_mon_2023 = rent_neigh_joint_df |> 
+  mutate(date = as.Date(date),
+         month = lubridate::month(date)) |> 
+  filter(lubridate::year(date) == 2023) |> 
+  select(-date, -neighborhood)
+```
+
 # Problem 3
