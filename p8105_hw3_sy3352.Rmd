@@ -235,6 +235,7 @@ age_edu_plot
 total_activity = joint_mims |> 
   group_by(seqn, sex, age, education) |> 
   summarize(total_activity = sum(mims, na.rm = TRUE)) 
+
 total_activity_plot = total_activity |> 
   ggplot(aes(x = age, y = total_activity, color = sex)) + 
   geom_point(alpha = .7) + 
@@ -246,9 +247,36 @@ total_activity_plot = total_activity |>
     y = "Total Activity (from MIMS readings)"
   ) +
   theme(plot.title = element_text(face = "bold", hjust = 0.5),
-        legend.position = "bottom")
+        legend.position = "bottom",
+        strip.text = element_text(face = "bold"))
 total_activity_plot 
 ```
 
 **The figure above shows the**
 
+```{r activity_24h_plot,fig.width = 8, fig.height = 12}
+activity_24h = joint_mims |> 
+  select(-bmi, -age) |> 
+  mutate(minute = as.numeric(gsub("min", "", minute))) 
+
+activity_24h_plot = activity_24h |> 
+  ggplot(aes(x = minute, y = mims, color = sex)) + 
+  geom_point(alpha = .03, size = .2) + 
+  geom_smooth(se = FALSE, size = .6, span = .2) + 
+  facet_wrap(~education, ncol = 1) +
+  scale_x_continuous(breaks = seq(0,1440, by = 120),
+                     labels = c("12 AM", "2 AM", "4 AM", "6 AM", "8 AM", "10 AM", 
+                                "12 PM", "2 PM", "4 PM", "6 PM", "8 PM", "10 PM", "12 AM")) +
+  scale_color_manual(values = c("male" = "darkblue", "female" = "orange")) +
+  labs(
+    title = "24-Hour Activity in Different Education Groups",
+    x = "Time of the Day",
+    y = "Activity (from MIMS readings)"
+  ) +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5),
+        legend.position = "bottom",
+        strip.text = element_text(face = "bold"))
+activity_24h_plot
+```
+
+**The figure above shows the**
