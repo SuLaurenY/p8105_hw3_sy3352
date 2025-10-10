@@ -178,7 +178,26 @@ ggsave(filename = "results/zillow_rent_combined_plot.png",
 ```{r}
 covar_df = read_csv("data/nhanes_covar.csv",skip = 4) |> 
   janitor::clean_names() |> 
-  filter(!(bmi == "na"), !(education == "na"), age >= 21) 
+  filter(!(bmi == "na"), !(education == "na"), age >= 21) |> 
+  mutate(sex = factor(sex), education = factor(education)) |> 
+  mutate(sex = recode(sex, `1` = "male", `2` = "female"),
+         education = recode(education, `1` = "less than high school",
+                            `2` = "high school equivalent",
+                            `3` = "more than high school")) 
+```
+
+```{r}
+accel_df = read_csv("data/nhanes_accel.csv") |> 
+  janitor::clean_names() |> 
+  pivot_longer(
+    cols = starts_with("min"),
+    names_to = "minute",
+    values_to = "mims"
+  )
+
+joint_mims = accel_df |> 
+  left_join(covar_df, by = c("seqn")) |> 
+  filter(!(bmi == "na"), !(education == "na")) 
 ```
 
 ```{r}
@@ -186,12 +205,50 @@ edu_gender =
   covar_df |> select(-seqn, -age, -bmi) |> 
   group_by(education, sex) |> 
   summarize(n = n()) |> 
-  mutate(sex = recode(sex, `1` = "male", `2` = "female"),
-         education = recode(education, `1` = "less than high school",
-                            `2` = "high school equivalent",
-                            `3` = "more than high school")) |> 
   pivot_wider(names_from = sex, values_from = n) |> 
   knitr::kable()
 edu_gender
 ```
+
+**The figure above shows the**
+
+```{r age_edu_plot, fig.width = 8, fig.height = 8}
+age_edu_plot = 
+  covar_df |> 
+  ggplot(aes(x = factor(education), y = age, color = sex)) + 
+  geom_violin(alpha = .5) + 
+  facet_wrap(~sex, ncol = 1) +
+  labs(
+    title = "Age Distribution for Men and Women in Each Education Category",
+    x = "Education Category",
+    y = "Age"
+  ) +
+  theme(strip.text = element_blank(),
+        plot.title = element_text(face = "bold", hjust = 0.5),
+        legend.position = "bottom")
+age_edu_plot
+```
+
+**The figure above shows the**
+
+```{r}
+total_activity = joint_mims |> 
+  group_by(seqn, sex, age, education) |> 
+  summarize(total_activity = sum(mims, na.rm = TRUE)) 
+total_activity_plot = total_activity |> 
+  ggplot(aes(x = age, y = total_activity, color = sex)) + 
+  geom_point(alpha = .7) + 
+  geom_smooth(se = FALSE) + 
+  facet_wrap(~education) +
+  labs(
+    title = "Total Activity against Age in Different Education Groups",
+    x = "Age",
+    y = "Total Activity (from MIMS readings)"
+  ) +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5),
+        legend.position = "bottom")
+total_activity_plot 
+```
+
+**The figure above shows the**
 
