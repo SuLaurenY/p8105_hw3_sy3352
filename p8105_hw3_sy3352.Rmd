@@ -10,6 +10,8 @@ library(tidyverse)
 library(ggridges)
 library(p8105.datasets)
 library(patchwork)
+library(janitor)
+library(knitr)
 data("instacart")
 ```
 
@@ -172,3 +174,24 @@ ggsave(filename = "results/zillow_rent_combined_plot.png",
 ```
 
 # Problem 3
+
+```{r}
+covar_df = read_csv("data/nhanes_covar.csv",skip = 4) |> 
+  janitor::clean_names() |> 
+  filter(!(bmi == "na"), !(education == "na"), age >= 21) 
+```
+
+```{r}
+edu_gender = 
+  covar_df |> select(-seqn, -age, -bmi) |> 
+  group_by(education, sex) |> 
+  summarize(n = n()) |> 
+  mutate(sex = recode(sex, `1` = "male", `2` = "female"),
+         education = recode(education, `1` = "less than high school",
+                            `2` = "high school equivalent",
+                            `3` = "more than high school")) |> 
+  pivot_wider(names_from = sex, values_from = n) |> 
+  knitr::kable()
+edu_gender
+```
+
