@@ -78,7 +78,8 @@ rent_df = read_csv("data/Zip_zori_uc_sfrcondomfr_sm_month_NYC.csv") |>
 
 zip_df = read_csv("data/Zip Codes.csv") |> 
   janitor::clean_names() |> 
-  select(-county_code, -county_fips, -state_fips, -file_date, -county)
+  select(-county_code, -county_fips, -state_fips, -file_date, -county) |> 
+  distinct(zip_code, .keep_all = TRUE)
 
 rent_neigh_joint_df = rent_df |> 
   left_join(zip_df, by = c("zip_code")) |> 
@@ -109,7 +110,7 @@ year_trend
 ```
 From the table above, we can see that in general, the rental prices across all boroughs in NYC increased consistently from year 2015 to year 2024, except in year 2022 when the impact of covid-19 caused on overall decline in rental pr1ices compared with the previous year. There were no rental data available for Richmond County until year 2020.  
 Among the 5 boroughs that we compare, New York County consistently has the highest rental prices, and the Bronx County has the lowest.  
-Bronx county experienced the fastest rent growth among the 5 boroughs with its rent in 2024 being **1.39** times higher compared to what's in 2015. In contrast, Queens has the slowest rent growth with a **1.22** times higher rent in 2024 compared with that in 2015.
+Bronx county experienced the fastest rent growth among the 5 boroughs with its rent in 2024 being **1.41** times higher compared to what's in 2015. In contrast, Queens has the slowest rent growth with a **1.22** times higher rent in 2024 compared with that in 2015.
 
 ```{r}
 zip_year = rent_neigh_joint_df |> 
